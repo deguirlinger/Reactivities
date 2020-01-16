@@ -53,6 +53,9 @@ namespace Persistence.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Bio")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("TEXT");
@@ -112,6 +115,27 @@ namespace Persistence.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("Domain.Photo", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsMain")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Url")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
+
+                    b.ToTable("Photos");
+                });
+
             modelBuilder.Entity("Domain.UserActivity", b =>
                 {
                     b.Property<string>("AppUserId")
@@ -156,21 +180,21 @@ namespace Persistence.Migrations
                         new
                         {
                             Id = 1,
-                            Date = new DateTime(2020, 1, 15, 9, 18, 55, 636, DateTimeKind.Local).AddTicks(9870),
+                            Date = new DateTime(2020, 1, 17, 9, 57, 21, 314, DateTimeKind.Local).AddTicks(2090),
                             Summary = "Frigid",
                             TemperatureC = -7
                         },
                         new
                         {
                             Id = 2,
-                            Date = new DateTime(2020, 1, 16, 9, 18, 55, 656, DateTimeKind.Local).AddTicks(120),
+                            Date = new DateTime(2020, 1, 18, 9, 57, 21, 332, DateTimeKind.Local).AddTicks(2710),
                             Summary = "Human",
                             TemperatureC = 37
                         },
                         new
                         {
                             Id = 3,
-                            Date = new DateTime(2020, 1, 17, 9, 18, 55, 656, DateTimeKind.Local).AddTicks(170),
+                            Date = new DateTime(2020, 1, 19, 9, 57, 21, 332, DateTimeKind.Local).AddTicks(2750),
                             Summary = "Perfection",
                             TemperatureC = 23
                         });
@@ -302,6 +326,13 @@ namespace Persistence.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
+                });
+
+            modelBuilder.Entity("Domain.Photo", b =>
+                {
+                    b.HasOne("Domain.AppUser", null)
+                        .WithMany("Photos")
+                        .HasForeignKey("AppUserId");
                 });
 
             modelBuilder.Entity("Domain.UserActivity", b =>
