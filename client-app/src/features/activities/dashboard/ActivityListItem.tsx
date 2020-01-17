@@ -18,12 +18,19 @@ export const ActivityListItem: React.FC<{ activity: IActivity }> = ({
               size="tiny"
               circular
               src={host.image || '/assets/user.png'}
+              style={{ marginBottom: 3 }}
             />
             <Item.Content>
               <Item.Header as={Link} to={`/activities/${activity.id}`}>
                 {activity.title}
               </Item.Header>
-              <Item.Description>Hosted by {host.displayName}</Item.Description>
+              <Item.Description>
+                Hosted by
+                <Link to={`/profile/${host.username}`}>
+                  {' '}
+                  {host.displayName}
+                </Link>
+              </Item.Description>
               {activity.isHost && (
                 <Item.Description>
                   <Label
@@ -42,15 +49,12 @@ export const ActivityListItem: React.FC<{ activity: IActivity }> = ({
                   />
                 </Item.Description>
               )}
-              <Item.Extra>
-                <Label basic content={activity.category} />
-              </Item.Extra>
             </Item.Content>
           </Item>
         </Item.Group>
       </Segment>
       <Segment>
-        <Icon name="clock" /> {format(activity.date, 'h:mm a')}
+        <Icon name="clock" /> {format(activity.date, 'h:mm a')}{' '}
         <Icon name="marker" /> {activity.venue}, {activity.city}
       </Segment>
       <Segment secondary>
