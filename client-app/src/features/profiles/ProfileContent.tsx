@@ -28,6 +28,7 @@ export const ProfileContent = () => {
       }}
       menuPosition="right"
       panes={panes}
+      activeIndex={1}
     />
   );
 };
