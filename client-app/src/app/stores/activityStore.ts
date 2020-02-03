@@ -1,4 +1,11 @@
-import { observable, action, computed, runInAction, reaction } from 'mobx';
+import {
+  observable,
+  action,
+  computed,
+  runInAction,
+  reaction,
+  toJS
+} from 'mobx';
 import { SyntheticEvent } from 'react';
 import { IActivity } from '../models/activity';
 import agent from '../api/agent';
@@ -69,7 +76,7 @@ export default class ActivityStore {
     this.page = page;
   };
 
-  @action createHubConnection = (activityId: string) => {
+  @action createHubConnection = () => {
     this.hubConnection = new HubConnectionBuilder()
       .withUrl('http://localhost:5000/chat', {
         accessTokenFactory: () => this.rootStore.commonStore.token!
@@ -80,10 +87,6 @@ export default class ActivityStore {
     this.hubConnection
       .start()
       .then(() => console.log(this.hubConnection!.state))
-      .then(() => {
-        console.log('Attempting to join group...');
-        this.hubConnection!.invoke('AddToGroup', activityId);
-      })
       .catch(error => console.log('Error establishing connection: ', error));
 
     this.hubConnection.on('ReceiveComment', comment => {
@@ -91,22 +94,13 @@ export default class ActivityStore {
         this.activity!.comments.push(comment);
       });
     });
-
-    this.hubConnection.on('Send', message => {
-      toast.info(message);
-    });
   };
 
   @action stopHubConnection = () => {
-    this.hubConnection!.invoke('RemoveFromGroup', this.activity!.id)
-      .then(() => {
-        this.hubConnection!.stop();
-      })
-      .then(() => console.log('Connection stopped...'))
-      .catch(err => console.log(err));
-    runInAction(() => {
-      this.activity = null;
-    });
+    this.hubConnection!.stop();
+    // runInAction(() => {
+    //   this.activity = null;
+    // });
   };
 
   @action addComment = async (values: any) => {
@@ -167,7 +161,7 @@ export default class ActivityStore {
     let activity = this.getActivity(id);
     if (activity) {
       this.activity = activity;
-      return activity;
+      return toJS(activity);
     } else {
       this.loadingInitial = true;
       try {
