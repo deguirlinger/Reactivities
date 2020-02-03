@@ -76,7 +76,8 @@ export default class ActivityStore {
     this.page = page;
   };
 
-  @action createHubConnection = () => {
+  @action createHubConnection = (activityId: string) => {
+    this.loadActivity(activityId);
     this.hubConnection = new HubConnectionBuilder()
       .withUrl('http://localhost:5000/chat', {
         accessTokenFactory: () => this.rootStore.commonStore.token!
@@ -87,6 +88,12 @@ export default class ActivityStore {
     this.hubConnection
       .start()
       .then(() => console.log(this.hubConnection!.state))
+      .then(() => {
+        if (this.hubConnection!.state === 'Connected') {
+          console.log('Attempting to join group...');
+          this.hubConnection!.invoke('AddToGroup', activityId);
+        }
+      })
       .catch(error => console.log('Error establishing connection: ', error));
 
     this.hubConnection.on('ReceiveComment', comment => {
@@ -94,13 +101,21 @@ export default class ActivityStore {
         this.activity!.comments.push(comment);
       });
     });
+
+    this.hubConnection.on('Send', message => {
+      toast.info(message);
+    });
   };
 
-  @action stopHubConnection = () => {
-    this.hubConnection!.stop();
-    // runInAction(() => {
-    //   this.activity = null;
-    // });
+  @action stopHubConnection = (activityId: string) => {
+    this.hubConnection!.invoke('RemoveFromGroup', activityId)
+      .then(() => this.hubConnection!.stop())
+      .then(() => console.log('Connection stopped'))
+      .catch(err => console.log(err));
+
+    runInAction(() => {
+      this.activity = null;
+    });
   };
 
   @action addComment = async (values: any) => {
