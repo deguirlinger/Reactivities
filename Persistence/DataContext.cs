@@ -11,7 +11,6 @@ namespace Persistence
     {
     }
 
-    public DbSet<WeatherForecast> WeatherForecasts { get; set; }
     public DbSet<Activity> Activities { get; set; }
     public DbSet<UserActivity> UserActivities { get; set; }
     public DbSet<Photo> Photos { get; set; }
@@ -22,30 +21,13 @@ namespace Persistence
     {
       base.OnModelCreating(builder);
 
-      builder.Entity<WeatherForecast>()
-      .HasData(
-          new WeatherForecast
-          {
-            Id = 1,
-            Date = DateTime.Now.AddDays(1),
-            TemperatureC = -7,
-            Summary = "Frigid"
-          },
-          new WeatherForecast
-          {
-            Id = 2,
-            Date = DateTime.Now.AddDays(2),
-            TemperatureC = 37,
-            Summary = "Human"
-          },
-          new WeatherForecast
-          {
-            Id = 3,
-            Date = DateTime.Now.AddDays(3),
-            TemperatureC = 23,
-            Summary = "Perfection"
-          }
-      );
+      // builder.Entity<Activity>()
+      //   .Property(a => a.Id)
+      //   .HasMaxLength(256);
+
+      // builder.Entity<Comment>()
+      //   .Property(c => c.Id)
+      //   .HasMaxLength(256);
 
       builder.Entity<UserActivity>(x => x.HasKey(ua => new { ua.AppUserId, ua.ActivityId }));
 
