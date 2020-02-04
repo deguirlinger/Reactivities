@@ -107,8 +107,8 @@ export default class ActivityStore {
     });
   };
 
-  @action stopHubConnection = (activityId: string) => {
-    this.hubConnection!.invoke('RemoveFromGroup', activityId)
+  @action stopHubConnection = () => {
+    this.hubConnection!.invoke('RemoveFromGroup', this.activity!.id)
       .then(() => this.hubConnection!.stop())
       .then(() => console.log('Connection stopped'))
       .catch(err => console.log(err));

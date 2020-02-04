@@ -19,7 +19,7 @@ const ActivityDetailedChat = () => {
   useEffect(() => {
     createHubConnection(activity!.id);
     return () => {
-      stopHubConnection(activity!.id);
+      stopHubConnection();
     };
   }, [createHubConnection, stopHubConnection, activity]);
 
